@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DigiPay UPG — Lifecycle Sandbox</title>
+  <link rel="stylesheet" href="assets/styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="dot"></span>
+      <h1>DigiPay UPG — Lifecycle Sandbox</h1>
+    </div>
+    <p class="tagline">
+      Everything runs in your browser. Tokens &amp; purchase state live only in
+      <code>localStorage</code> — nothing is saved on any server.
+    </p>
+  </header>
+
+  <section class="settings" id="settings">
+    <div class="settings-row">
+      <label>
+        Environment
+        <select id="env">
+          <option value="production">production</option>
+          <option value="staging">staging</option>
+        </select>
+      </label>
+      <label class="grow">
+        Worker proxy base URL
+        <input type="text" id="workerBase" placeholder="https://digipay-proxy.<you>.workers.dev" />
+      </label>
+      <button id="resetBtn" class="ghost danger" title="Clear all saved state">Reset all</button>
+    </div>
+    <p class="hint" id="settingsHint">
+      The browser cannot call DigiPay directly (CORS). All calls go through your Cloudflare Worker
+      proxy. Set its URL above. See the README to deploy it with <code>wrangler</code>.
+    </p>
+  </section>
+
+  <main id="flow" class="flow"></main>
+
+  <footer class="footer">
+    <span>Generated harness for <code>docs/digipay.md</code>.</span>
+    <span id="stateInfo"></span>
+  </footer>
+
+  <!-- step template -->
+  <template id="stepTpl">
+    <section class="step" data-step="">
+      <div class="step-head">
+        <span class="step-index"></span>
+        <h2 class="step-title"></h2>
+        <span class="step-status" data-status="locked">locked</span>
+        <button class="step-toggle" hidden>edit</button>
+      </div>
+      <div class="step-body"></div>
+    </section>
+  </template>
+
+  <script src="assets/app.js"></script>
+</body>
+</html>

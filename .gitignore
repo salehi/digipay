@@ -1,0 +1,12 @@
+node_modules/
+worker/node_modules/
+.wrangler/
+.dev.vars
+*.log
+.DS_Store
+
+# Cloudflare secrets (never commit)
+worker/cloudflare.credentials
+*.credentials
+.env
+worker/.env

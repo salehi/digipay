@@ -1,0 +1,8 @@
+name = "digipay-proxy"
+main = "worker.js"
+compatibility_date = "2024-11-01"
+
+# The GitHub Pages URL of the SPA the callback should bounce back to.
+# Update <user> if you fork this under a different account.
+[vars]
+APP_URL = "https://salehi.github.io/digipay/"
