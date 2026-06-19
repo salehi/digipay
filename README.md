@@ -32,6 +32,11 @@ Browsers **cannot call the DigiPay API directly** — there are no CORS headers,
 
 The Worker keeps no state — it only forwards and redirects.
 
+> **Empirically confirmed:** DigiPay's API returns `Access-Control-Allow-Origin` **only for its
+> own domain** (`www.mydigipay.com`). Tested third-party origins — including a real merchant
+> (`www.digikala.com`) — get no ACAO, so the browser blocks the response. DigiPay is a
+> server-to-server API; a proxy is unavoidable for any browser-based caller.
+
 ## Deploy
 
 ### 1. The static app (GitHub Pages)
