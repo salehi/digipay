@@ -151,7 +151,7 @@ function render() {
     const toggle = node.querySelector(".step-toggle");
     if (st.done) {
       toggle.hidden = false;
-      toggle.onclick = () => { node.classList.toggle("expanded"); };
+      toggle.onclick = () => { st.done = false; saveState(); render(); };
     }
 
     const body = node.querySelector(".step-body");

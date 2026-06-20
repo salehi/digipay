@@ -87,7 +87,6 @@ button.small { padding: 5px 10px; font-size: 0.8rem; }
 }
 .step.locked { opacity: .45; pointer-events: none; }
 .step.done .step-body { display: none; }
-.step.done.expanded .step-body { display: block; }
 
 .step-head {
   display: flex; align-items: center; gap: 12px;
