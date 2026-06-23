@@ -242,6 +242,7 @@ RENDERERS.ticket = (body, st) => {
   const d = st.data;
   if (!d.providerId) { d.providerId = uuidv8(); saveState(); }
   if (!d.callbackUrl) d.callbackUrl = (state.workerBase || "").replace(/\/+$/, "") + "/cb";
+  if (d.amount == null || d.amount === "") { d.amount = 10000; saveState(); }
   if (st.done) {
     body.innerHTML = kv([
       ["providerId", d.providerId], ["amount", d.amount], ["ticket", d.response?.ticket],
@@ -251,7 +252,7 @@ RENDERERS.ticket = (body, st) => {
   }
   body.innerHTML = `
     <div class="grid2">
-      <label>amount (Rial)<input id="tk_amount" type="number" value="${esc(d.amount || "")}" placeholder="10000"></label>
+      <label>amount (Rial)<input id="tk_amount" type="number" value="${esc(d.amount ?? 10000)}" placeholder="10000"></label>
       <label>cellNumber<input id="tk_cell" value="${esc(d.cell || "")}" placeholder="09xxxxxxxxx"></label>
     </div>
     <div class="field-row" style="margin-top:12px">
@@ -259,21 +260,35 @@ RENDERERS.ticket = (body, st) => {
       <button class="small ghost" id="tk_regen" type="button">regenerate</button>
     </div>
     <label style="margin-top:12px">callbackUrl<input id="tk_cb" value="${esc(d.callbackUrl)}"></label>
-    <label style="margin-top:12px">create type <input id="tk_type" value="11"></label>
+    <label style="margin-top:12px">create type <input id="tk_type" value="${esc(d.type || "11")}"></label>
     <div class="slider" style="margin-top:14px">
       <span class="note">Payment instrument (preferredGateway)</span>
-      ${slider("tk_gw", ["Selection page", "Wallet (0)", "IPG (2)"], 0)}
+      ${slider("tk_gw", ["Selection page", "Wallet (0)", "IPG (2)"], d.gw || 0)}
     </div>
     <details class="advanced">
       <summary>Advanced: basketDetailsDto / splitDetailsList / additionalInfo (JSON)</summary>
-      <label style="margin-top:8px">basketDetailsDto (credit/installment)<textarea id="tk_basket" placeholder='{ "basketId": "...", "items": [ ... ] }'></textarea></label>
-      <label style="margin-top:8px">splitDetailsList (max 2)<textarea id="tk_split" placeholder='[ { "type": "simple", "amount": 1000, "username": "..." } ]'></textarea></label>
-      <label style="margin-top:8px">additionalInfo (merged with preferredGateway)<textarea id="tk_extra"></textarea></label>
+      <label style="margin-top:8px">basketDetailsDto (credit/installment)<textarea id="tk_basket" placeholder='{ "basketId": "...", "items": [ ... ] }'>${esc(d.basket || "")}</textarea></label>
+      <label style="margin-top:8px">splitDetailsList (max 2)<textarea id="tk_split" placeholder='[ { "type": "simple", "amount": 1000, "username": "..." } ]'>${esc(d.split || "")}</textarea></label>
+      <label style="margin-top:8px">additionalInfo (merged with preferredGateway)<textarea id="tk_extra">${esc(d.extra || "")}</textarea></label>
     </details>
     <div class="actions"><button id="tk_go">Create Ticket</button></div>
     <div id="tk_out"></div>`;
 
-  wireSlider(body, "tk_gw");
+  // persist every field to localStorage as the user edits it
+  const persist = (sel, key) => {
+    const el = body.querySelector(sel);
+    if (el) el.addEventListener("input", () => { d[key] = el.value; saveState(); });
+  };
+  persist("#tk_amount", "amount");
+  persist("#tk_cell", "cell");
+  persist("#tk_pid", "providerId");
+  persist("#tk_cb", "callbackUrl");
+  persist("#tk_type", "type");
+  persist("#tk_basket", "basket");
+  persist("#tk_split", "split");
+  persist("#tk_extra", "extra");
+
+  wireSlider(body, "tk_gw", (i) => { d.gw = i; saveState(); });
   body.querySelector("#tk_regen").onclick = () => { d.providerId = uuidv8(); saveState(); render(); };
   body.querySelector("#tk_go").onclick = async (e) => {
     const btn = e.target;
